@@ -3,13 +3,16 @@
 #include <string>
 #include <list>
 
-#include "BusStation.h"
+#include "BusStop.h"
 
 class BusLine{
 public:
-    BusLine(const std::string& name, const std::string& stations);
+    BusLine(const std::string& name, BusStop* first_stop)
+        : name(name), first_stop(first_stop) {}
+
+    const std::string& getName() const { return name; }
 
 private:
     std::string name;
-    BusStation* first_station, last_station;
+    BusStop *first_stop;
 };
