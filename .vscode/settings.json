@@ -68,6 +68,7 @@
         "filesystem": "cpp",
         "version": "cpp",
         "list": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "map": "cpp"
     }
 }
