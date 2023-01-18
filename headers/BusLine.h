@@ -2,17 +2,23 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
 #include "BusStop.h"
+#include "Edge.h"
+class BusStop;
+class Edge;
 
 class BusLine{
 public:
-    BusLine(const std::string& name, BusStop* first_stop)
-        : name(name), first_stop(first_stop) {}
+    BusLine(const std::string& name, const std::list<BusStop*> stops);
 
     const std::string& getName() const { return name; }
 
 private:
     std::string name;
-    BusStop *first_stop;
+    std::list<BusStop*> stops;
+    std::list<Edge*> edges;
+
+    friend class LinePrintBehaviour;
 };
