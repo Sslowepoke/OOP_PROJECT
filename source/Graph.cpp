@@ -84,3 +84,9 @@ void Graph::printLine(const std::string& name, const std::string& file_name) {
     Printer p(file_name, new LinePrintBehaviour(), new StopPrintBehaviour());
     p.printLine(lines[name]);
 }
+
+void Graph::findPath(int start, int end) {
+    LeastTransfersPathStrategy s = LeastTransfersPathStrategy();
+    s.findPath(stops[start], stops[end]);
+
+}

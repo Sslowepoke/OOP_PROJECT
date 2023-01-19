@@ -7,6 +7,7 @@
 #include "BusStop.h"
 #include "BusLine.h"
 #include "Printer.h"
+#include "Strategy.h"
 
 class Graph {
 public:
@@ -19,7 +20,7 @@ public:
     void printStop(int id, const std::string& file_name);
     void printLine(const std::string& name, const std::string& file_name);
     
-
+    void findPath(int start, int end);
     
 
 

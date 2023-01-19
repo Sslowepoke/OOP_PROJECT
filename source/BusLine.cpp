@@ -12,3 +12,23 @@ BusLine::BusLine(const std::string& name, const std::list<BusStop*> stops) : nam
     }
 
 }
+
+std::list<int> BusLine::travel(BusStop* start, BusStop* end) const{
+    std::list<int> path;
+    bool on_the_bus = false;
+    for(auto stop : stops) {
+        if(stop == start || stop == end) on_the_bus = !on_the_bus;
+        if(on_the_bus) {
+            path.push_back(stop->getId());
+        }
+    }
+    if(path.front() != start->getId()) {
+        path.push_back(start->getId());
+        path.reverse();
+    }
+    else if(path.front() == start->getId()) {
+        path.push_back(end->getId());
+    }
+    // throw std::out_of_range("BusLine out of range.");
+    return path;
+}

@@ -13,6 +13,9 @@ public:
     const BusLine* getLine() const { return line; }
     BusStop* other(const BusStop* first) const {  return first == first_stop? second_stop : first_stop; }
 
+    void travel() { travelled = true; }
+    bool was_travelled() const { return travelled; }
+
 private:
     BusStop *first_stop, *second_stop;
     bool travelled = false;

@@ -14,6 +14,7 @@ public:
     BusLine(const std::string& name, const std::list<BusStop*> stops);
 
     const std::string& getName() const { return name; }
+    std::list<int> travel(BusStop* start, BusStop* end) const;
 
 private:
     std::string name;
