@@ -1,0 +1,121 @@
+#pragma once
+
+#include "Graph.h"
+
+
+
+class Simulation {
+public:
+
+    static Simulation& getInstance() { return instance; }
+
+    Simulation(const Simulation &) = delete;
+    void operator=(const Simulation &) = delete;
+
+    void openTerminal();
+
+
+
+private:
+    Simulation();
+
+    static Simulation instance;
+
+
+
+    // za komande koje idu u krug
+    class Option {
+    public:
+        Option(const std::string& name) : name(name) {}
+        // std::string what; //prompt koji se ispisuje korisniku na terminal ako je odabrana ova opcija
+        std::string name; //ime opcije (prilikom biranja)  
+        virtual bool execute() = 0;
+        friend std::ostream& operator<<(std::ostream& os, const Simulation::Option& option);
+    private:
+
+
+    };
+    friend std::ostream& operator<<(std::ostream& os, const Simulation::Option& option);
+
+    class ExitOption : public Option {
+    public:
+        ExitOption() : Option("Kraj rada") {}
+        bool execute() override;
+
+    };
+
+    class BusStopInfoOption : public Option {
+    public:
+        BusStopInfoOption() : 
+            Option("Prikaz informacija o stajalistu"){}
+                // "Molimo Vas, unesite sifru stajalista cije informacije zelite da prikazete"
+        bool execute() override;
+
+    private:
+        int stop_id;
+    };
+
+    class BusLineInfoOption : public Option {
+    public:
+        BusLineInfoOption() :
+            Option("Prikaz informacija o liniji gradskog prevoza") {}
+                // "Molimo Vas, unesite oznaku linije cije informacije zelite da prikazete."
+        bool execute() override;
+    private:
+        std::string line_name;
+    };
+
+    class FindPathOption : public Option {
+    public:
+        FindPathOption() : 
+            Option("Pronalazak putanje izmedju dva stajalista") {}
+        bool execute() override;
+    };
+
+    class ChangePathStrategyOption : public Option {
+    public:
+        ChangePathStrategyOption() :
+            Option("Promena strategije za trazenje putanje") {}
+        bool execute() override;
+    };
+
+
+
+    class LoadDataOption : public Option {
+    public:
+        LoadDataOption() : Option("Ucitavanje podataka o mrezi gradskog prevoza") {}
+        bool execute() override;
+
+    private:
+        std::string file_path;
+        static constexpr std::string_view default_line_file_path = "file/test/linije.txt";
+        static constexpr std::string_view default_stop_file_path = "file/test/stajalista.txt";
+
+        void loadLineData();
+        void loadStopData();
+    };
+
+
+    class Interface {
+    public:
+        Interface();
+        void printOptions();
+        bool executeOption();
+        bool initialized = true;
+
+    private:
+        int count;
+        std::vector<Option> options;
+    };
+
+    class EndProgram : public std::exception {
+    public:
+        std::string whatstr;
+        EndProgram() : whatstr("Goodbye :)") {}
+        const char* what() const noexcept override { return whatstr.c_str(); }
+    };
+
+
+    Graph graph;
+
+};

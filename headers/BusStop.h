@@ -17,6 +17,7 @@ public:
     // std::list<const std::string&> getLineNames() const;
     // std::list<int> getNeighbourIds() const;
     bool is_important() const { return important; }
+    const std::list<Edge*>& getEdges() const { return edges; }
 
     
 
@@ -28,5 +29,5 @@ private:
     std::list<Edge*> edges;
     // std::unordered_map<BusLine*, BusStop*> neighbours;
     friend class StopPrintBehaviour;
-    friend class LeastTransfersPathStrategy;
+    // friend class LeastTransfersPathStrategy;
 };

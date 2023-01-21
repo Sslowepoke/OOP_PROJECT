@@ -1,9 +1,6 @@
 #include "Printer.h"
 
 #include <set>
-// #include <fstream>
-
-
 
 void StopPrintBehaviour::print(BusStop* stop, std::ostream& output) {
     output << stop->id << " " << stop->name << " [";
@@ -12,12 +9,9 @@ void StopPrintBehaviour::print(BusStop* stop, std::ostream& output) {
     std::set<int> important_ids;
     for(Edge* edge : stop->edges) {
         line_names.insert(edge->getLine()->getName());
-        // std::string line_name = edge->getLine()->getName();
         BusStop* neighbour = edge->other(stop);
         if(neighbour->is_important()) important_ids.insert(neighbour->getId());
     }
-    // line_names.sort();
-    // important_ids.sort();
     for(auto line_name : line_names) {
         output << line_name << " ";
     }
