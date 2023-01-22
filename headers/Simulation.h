@@ -7,25 +7,33 @@
 class Simulation {
 public:
 
-    static Simulation& getInstance() { return instance; }
+    static Simulation& getInstance();
 
     Simulation(const Simulation &) = delete;
     void operator=(const Simulation &) = delete;
 
     void openTerminal();
 
+    void loadLineData(const std::string& file_path);
+    void loadStopData(const std::string& file_path);
+    void printStopInfo(int id, const std::string& file_name);
+    void printLineInfo(const std::string& name, const std::string& file_name);
+
 
 
 private:
-    Simulation();
+    Simulation() : graph() {}
 
-    static Simulation instance;
-
+    // static Simulation instance;
+    Graph graph;
+    static std::string default_output_path;
+    static std::string default_file_extension;
 
 
     // za komande koje idu u krug
     class Option {
     public:
+        virtual ~Option() = default;
         Option(const std::string& name) : name(name) {}
         // std::string what; //prompt koji se ispisuje korisniku na terminal ako je odabrana ova opcija
         std::string name; //ime opcije (prilikom biranja)  
@@ -79,8 +87,6 @@ private:
         bool execute() override;
     };
 
-
-
     class LoadDataOption : public Option {
     public:
         LoadDataOption() : Option("Ucitavanje podataka o mrezi gradskog prevoza") {}
@@ -88,8 +94,8 @@ private:
 
     private:
         std::string file_path;
-        static constexpr std::string_view default_line_file_path = "file/test/linije.txt";
-        static constexpr std::string_view default_stop_file_path = "file/test/stajalista.txt";
+        static constexpr std::string_view default_line_file_path = "files/OOP_PROJ_2022_23_JavniTest/test/linije.txt";
+        static constexpr std::string_view default_stop_file_path = "files/OOP_PROJ_2022_23_JavniTest/test/stajalista.txt";
 
         void loadLineData();
         void loadStopData();
@@ -99,13 +105,13 @@ private:
     class Interface {
     public:
         Interface();
+        ~Interface();
         void printOptions();
         bool executeOption();
         bool initialized = true;
 
     private:
-        int count;
-        std::vector<Option> options;
+        std::vector<Option*> options;
     };
 
     class EndProgram : public std::exception {
@@ -114,8 +120,5 @@ private:
         EndProgram() : whatstr("Goodbye :)") {}
         const char* what() const noexcept override { return whatstr.c_str(); }
     };
-
-
-    Graph graph;
 
 };

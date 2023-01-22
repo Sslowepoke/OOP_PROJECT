@@ -79,6 +79,7 @@ void Graph::insertBusStop(const std::string& string) {
 }
 
 void Graph::printStop(int id, const std::string& file_name) {
+    if(!stops.contains(id)) throw std::out_of_range("Stajaliste sa tom sifrom ne postoji.");
     Printer p(file_name, new LinePrintBehaviour(), new StopPrintBehaviour());
     p.printStop(stops[id]);
 }
