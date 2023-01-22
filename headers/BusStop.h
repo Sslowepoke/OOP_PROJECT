@@ -10,6 +10,7 @@ class Edge;
 class BusStop {
 public:
     BusStop(int id, const std::string& name, bool important) : id(id), name(name), important(important) {}
+    
     void addEdge(Edge* new_edge);
 
     int getId() const { return id; }
@@ -28,6 +29,6 @@ private:
     bool important;
     std::list<Edge*> edges;
     // std::unordered_map<BusLine*, BusStop*> neighbours;
-    friend class StopPrintBehaviour;
+    friend class DefaultStopPrintBehaviour;
     // friend class LeastTransfersPathStrategy;
 };

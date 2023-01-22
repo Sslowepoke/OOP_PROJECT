@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-std::string Simulation::default_output_path = "output/";
-std::string Simulation::default_file_extension = ".txt";
 
 Simulation& Simulation::getInstance() {
     static Simulation instance;
@@ -43,8 +41,8 @@ void Simulation::Interface::printOptions() {
 bool Simulation::Interface::executeOption() {
     int pos;
     if(std::cin >> pos){
+        std::cin.ignore();
         return options[pos]->execute();
-        std::cin.clear();
     }
     else
         throw std::invalid_argument("Opcija koju ste izabrali nije validna.");
@@ -80,27 +78,35 @@ bool Simulation::ExitOption::execute() {
 }
 
 bool Simulation::BusStopInfoOption::execute() {
+    int stop_id;
+    std::cout << "Molimo Vas, unesite sifru stajalista cije informacije zelite da prikazete." << std::endl;
     if(std::cin >> stop_id){
-        std::string stop_id_str = std::to_string(stop_id);
-        std::string file_path = default_output_path + "stajaliste_" + stop_id_str + default_file_extension;
-        getInstance().printStopInfo(stop_id, file_path);
+        std::cin.ignore();
+        getInstance().printStopInfo(stop_id);
         return true;
     }
     else 
         throw std::invalid_argument("Sifra stanice koju ste uneli nije validna.");
 }
 
-void Simulation::printStopInfo(int id, const std::string& file_name) {
-    graph.printStop(id, file_name);
+void Simulation::printStopInfo(int id) {
+    graph.printStop(id);
 }
 
 bool Simulation::BusLineInfoOption::execute() {
-
-    return true;
+    std::string line_name;
+    std::cout << "Molimo Vas, unesite oznaku linije cije informacije zelite da prikazete." << std::endl;
+    if(std::cin >> line_name) {
+        std::cin.ignore();
+        getInstance().printLineInfo(line_name);
+        return true;
+    }
+    else
+        throw std::invalid_argument("Ime linije koje ste uneli nije validno");
 }
 
-void Simulation::printLineInfo(const std::string& name, const std::string& file_name) {
-
+void Simulation::printLineInfo(const std::string& line_name) {
+    graph.printLine(line_name);
 }
 
 bool Simulation::LoadDataOption::execute() {
@@ -119,7 +125,7 @@ void Simulation::loadStopData(const std::string& file_path) {
 
 
 void Simulation::LoadDataOption::loadLineData() {
-    std::cout << "Molimo vas unesite putanju do fajla sa linijama ili"
+    std::cout << "Molimo vas unesite putanju do fajla sa linijama ili "
                 "kliknite ENTER za ucitavanje podrazumevanog fajla (file/test/linije.txt)"
                 << std::endl;
     // std::cin.clear();
@@ -129,7 +135,7 @@ void Simulation::LoadDataOption::loadLineData() {
 }
 
 void Simulation::LoadDataOption::loadStopData() {
-    std::cout << "Molimo vas unesite putanju do fajla sa stajalistima ili"
+    std::cout << "Molimo vas unesite putanju do fajla sa stajalistima ili "
                 "kliknite ENTER za ucitavanje podrazumevanog fajla (file/test/stajalista.txt)"
                 << std::endl;
     std::getline(std::cin, file_path);
@@ -142,9 +148,27 @@ std::ostream& operator<<(std::ostream& os, const Simulation::Option& option) {
 }
 
 bool Simulation::FindPathOption::execute() {
+    int start_id, end_id;
+    std::cout << "Molimo vas unesite pocetno stajaliste." << std::endl;
+    if(std::cin >> start_id) 
+        std::cin.ignore();
+    else
+        throw std::invalid_argument("Uneli ste nevalidnu sifru pocetnog stajalista.");
+    std::cout << "Molimo vas unestie krajnje stajaliste." << std::endl;
+    if(std::cin >> end_id) 
+        std::cin.ignore();
+    else
+        throw std::invalid_argument("Uneli ste nevalidnu sifru krajnjeg stajalista.");
+    getInstance().findPath(start_id, end_id);
     return true;
 }
 
+void Simulation::findPath(int start_id, int end_id) {
+    graph.findPath(start_id, end_id);
+    graph.printPath();
+}
+
 bool Simulation::ChangePathStrategyOption::execute() {
+
     return true;
 }

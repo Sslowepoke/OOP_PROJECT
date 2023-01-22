@@ -16,8 +16,9 @@ public:
 
     void loadLineData(const std::string& file_path);
     void loadStopData(const std::string& file_path);
-    void printStopInfo(int id, const std::string& file_name);
-    void printLineInfo(const std::string& name, const std::string& file_name);
+    void printStopInfo(int id);
+    void printLineInfo(const std::string& name);
+    void findPath(int start_id, int end_id);
 
 
 
@@ -26,8 +27,7 @@ private:
 
     // static Simulation instance;
     Graph graph;
-    static std::string default_output_path;
-    static std::string default_file_extension;
+
 
 
     // za komande koje idu u krug
@@ -60,7 +60,7 @@ private:
         bool execute() override;
 
     private:
-        int stop_id;
+        // int stop_id;
     };
 
     class BusLineInfoOption : public Option {
@@ -70,7 +70,7 @@ private:
                 // "Molimo Vas, unesite oznaku linije cije informacije zelite da prikazete."
         bool execute() override;
     private:
-        std::string line_name;
+        // std::string line_name;
     };
 
     class FindPathOption : public Option {
@@ -96,7 +96,6 @@ private:
         std::string file_path;
         static constexpr std::string_view default_line_file_path = "files/OOP_PROJ_2022_23_JavniTest/test/linije.txt";
         static constexpr std::string_view default_stop_file_path = "files/OOP_PROJ_2022_23_JavniTest/test/stajalista.txt";
-
         void loadLineData();
         void loadStopData();
     };

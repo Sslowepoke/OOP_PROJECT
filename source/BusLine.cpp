@@ -13,6 +13,12 @@ BusLine::BusLine(const std::string& name, const std::list<BusStop*> stops) : nam
 
 }
 
+BusLine::~BusLine() {
+    for(auto edge : edges) {
+        delete edge;
+    }
+}
+
 std::list<int> BusLine::travel(BusStop* start, BusStop* end) const{
     std::list<int> path;
     bool on_the_bus = false;
