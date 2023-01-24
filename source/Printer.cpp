@@ -5,7 +5,7 @@
 
 
 void DefaultStopPrintBehaviour::print(BusStop* stop, std::ostream& output) {
-    output << stop->id << " " << stop->name << " [";
+    output << stop->id << " " << stop->name << " [ ";
 
     std::set<std::string> line_names;
     std::set<int> important_ids;

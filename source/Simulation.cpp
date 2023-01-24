@@ -42,10 +42,12 @@ bool Simulation::Interface::executeOption() {
     int pos;
     if(std::cin >> pos){
         std::cin.ignore();
+        if(pos < 0 || options.size() <= pos) 
+            throw std::invalid_argument("Opcija koju ste izabrali nije validna, molimo pokusajte ponovo.");
         return options[pos]->execute();
     }
     else
-        throw std::invalid_argument("Opcija koju ste izabrali nije validna.");
+        throw std::invalid_argument("Opcija koju ste izabrali nije validna, molimo pokusajte ponovo.");
 }
 
 
@@ -54,11 +56,20 @@ Simulation::Interface::Interface() : options() {
     options.push_back(new LoadDataOption());
     
     std::cout << "Dobrodosli u simulator mreze gradskog prevoza. Molimo Vas, odaberite opciju: " << std::endl;
-    printOptions();
-    if(executeOption() == false) {
-        initialized = false;
-        return;
+    while(1) {
+        try {
+            printOptions();
+            if(executeOption() == false) {
+                initialized = false;
+                return;
+            }
+            else break;
+        }
+        catch(std::exception& e) {
+            std::cout << e.what() << std::endl;
+        }
     }
+    
     delete options.back();
     options.pop_back();
     options.push_back(new BusStopInfoOption());
@@ -169,6 +180,10 @@ void Simulation::findPath(int start_id, int end_id) {
 }
 
 bool Simulation::ChangePathStrategyOption::execute() {
-
+    getInstance().changePathStrategy();
     return true;
+}
+
+void Simulation::changePathStrategy() {
+    graph.changePathStrategy();
 }

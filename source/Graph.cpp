@@ -8,16 +8,29 @@
 #include <utility>
 
 Graph::~Graph() {
-    delete printer;
-    if(path) delete path;
-    delete path_strategy;
-    for(auto [key, value] : stops) {
-        delete value;
+    clearStops();
+    clearLines();
+    for(auto* path_strategy : path_strategies) {
+        delete path_strategy;
     }
+    if(path) delete path;
+    delete printer;
+}
+
+void Graph::clearLines() {
     for(auto& [key, value] : lines) {
         delete value;
     }
+    lines.clear();
 }
+
+void Graph::clearStops() {
+    for(auto [key, value] : stops) {
+        delete value;
+    }
+    stops.clear();
+}
+
 
 void Graph::loadStops(const std::string& file_path) {
     std::ifstream file(file_path);
@@ -30,9 +43,13 @@ void Graph::loadStops(const std::string& file_path) {
                 insertBusStop(line);
             }
         }
+        else
+            throw std::runtime_error("Neuspesno otvaranje fajla, molimo pokusajte ponovo.");
     }
     catch(std::exception& e) {
-        std::cout << e.what() << std::endl;
+        clearLines();
+        clearStops();
+        throw;
     }
 }
 
@@ -46,9 +63,13 @@ void Graph::loadLines(const std::string& file_path) {
                 insertBusLine(line);
             }
         }
+        else
+            throw std::runtime_error("Neuspesno otvaranje fajla, molimo pokusajte ponovo.");
     }
     catch(std::exception& e) {
-        std::cout << e.what() << std::endl;
+        clearLines();
+        clearStops();
+        throw;
     }
 }
 
@@ -105,7 +126,14 @@ void Graph::printLine(const std::string& name) {
 }
 
 void Graph::findPath(int start, int end) {
+    if(!stops.contains(start) || !stops.contains(end)) throw std::out_of_range("Stajaliste sa tom sifrom ne postoji.");
     path = path_strategy->findPath(stops[start], stops[end]);
+}
+
+void Graph::unvisit() {
+    for (auto& pair : stops) {
+        pair.second->unvisit();
+    }
 }
 
 void Graph::printPath() {
@@ -128,61 +156,99 @@ int Graph::Path::getEndId() const {
 }
 
 Graph::Path* Graph::LeastTransfersPathStrategy::findPath(BusStop* start, BusStop* end) {
-    std::set<BusStop*> visited;
     std::queue<std::pair<BusStop*, std::vector<Edge*>>> queue;
-    
+    std::unordered_map<int, bool> visited;
     queue.push({start, std::vector<Edge*>()});
 
     while(queue.size() > 0) {
         auto current = queue.front();
-        auto current_stop = current.first;
+        auto* current_stop = current.first;
         auto current_path = current.second;
         queue.pop();
         if(current_stop == end) {
             Path* path = new Path(start, current_path);
+            // graph->unvisit();
             return path;
         }
         for(auto edge : current_stop->getEdges()) {
             auto neighbour = edge->other(current_stop);
-            if(!edge->was_travelled()) {
-                edge->travel();
+            if(!visited.contains(neighbour->getId())) {
+                visited[neighbour->getId()] = true;
                 std::vector<Edge*> new_path(current_path);
                 new_path.push_back(edge);
                 queue.push({neighbour, new_path});
             }
         }
     }
-    throw std::out_of_range("Didn't find an answer");
+    throw std::out_of_range("Nije moguce doci sa zadatog pocetnog stajalista do krajnjeg.");
 }
 
 
-// to be changed
 Graph::Path* Graph::DefaultPathStrategy::findPath(BusStop* start, BusStop* end) {
-    std::set<BusStop*> visited;
     std::queue<std::pair<BusStop*, std::vector<Edge*>>> queue;
-    
+    std::unordered_map<int, bool> visited;
     queue.push({start, std::vector<Edge*>()});
 
     while(queue.size() > 0) {
         auto current = queue.front();
-        auto current_stop = current.first;
+        auto* current_stop = current.first;
         auto current_path = current.second;
         queue.pop();
         if(current_stop == end) {
             Path* path = new Path(start, current_path);
+            // graph->unvisit();
             return path;
         }
         for(auto edge : current_stop->getEdges()) {
             auto neighbour = edge->other(current_stop);
-            if(!edge->was_travelled()) {
-                edge->travel();
+            if(!visited.contains(neighbour->getId())) {
+                visited[neighbour->getId()] = true;
                 std::vector<Edge*> new_path(current_path);
                 new_path.push_back(edge);
                 queue.push({neighbour, new_path});
             }
         }
     }
-    throw std::out_of_range("Didn't find an answer");
+    throw std::out_of_range("Nije moguce doci sa zadatog pocetnog stajalista do krajnjeg.");
+}
+
+Graph::Path* Graph::findLeastTransfersPath(BusStop* start, BusStop* end) {
+    return path_strategies[1]->findPath(start, end);
+}
+
+Graph::Path* Graph::ImportantStopsStrategy::findPath(BusStop* start, BusStop* end) {
+    Graph::Path *path = new Graph::Path();
+    BusStop* previous = start;
+    for(auto current : graph->getImportantStops()) {
+        if(path->goesThrough(current)) continue;
+        (*path) += *graph->findLeastTransfersPath(previous, current);
+        previous = current;
+    }
+    *path += *graph->findLeastTransfersPath(previous, end);
+    return path;
+}
+
+bool Graph::Path::goesThrough(BusStop* stop) {
+    int stop_id = stop->getId();
+    for(auto& list : stop_ids) {
+        for(auto id : list) {
+            if(id == stop_id) return true;
+        }
+    }
+    return false;
+}
+
+Graph::Path& Graph::Path::operator+=(const Graph::Path& rhs) {
+    if(this->lines.size() > 0 && this->lines.back() == rhs.lines.front()) {
+        this->stop_ids.back().insert(this->stop_ids.back().end(), rhs.stop_ids.front().begin(), rhs.stop_ids.front().end());
+        this->lines.insert(this->lines.end(), rhs.lines.begin()+1, rhs.lines.end());
+        this->stop_ids.insert(this->stop_ids.end(), rhs.stop_ids.begin()+1, rhs.stop_ids.end());
+    }
+    else {
+        this->lines.insert(this->lines.end(), rhs.lines.begin(), rhs.lines.end());
+        this->stop_ids.insert(this->stop_ids.end(), rhs.stop_ids.begin(), rhs.stop_ids.end());
+    }
+    return *this;
 }
 
 Graph::Path::Path(BusStop* start, std::vector<Edge*> edges){
@@ -205,4 +271,26 @@ std::ostream& operator<<(std::ostream& os, const Graph::Path& path) {
         os << std::endl;
     }
     return os;
+}
+
+void Graph::changePathStrategy() {
+    std::cout << "Molimo vas izaberite jednu od strategija za pronalazenje puta." << std::endl;
+    int count = 0;
+    for(auto path_strategy : path_strategies) {
+        std::cout << count++ << ". " << *path_strategy << std::endl;
+    }
+    int position = 0;
+    if(std::cin >> position){
+        std::cin.ignore();
+        if(position > number_of_strategies -1 || position < 0)
+            throw std::invalid_argument("Opcija koju ste izabrali nije validna, molimo pokusajte ponovo.");
+        path_strategy = path_strategies[position];
+        return;
+    }
+    else
+        throw std::invalid_argument("Opcija koju ste izabrali nije validna, molimo pokusajte ponovo.");
+}
+
+std::ostream& operator<<(std::ostream& os, const Graph::PathStrategy& path_strategy) {
+    return os << path_strategy.description;
 }

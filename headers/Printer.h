@@ -18,7 +18,7 @@ class LinePrintBehaviour {
 public:
     virtual void print(BusLine* line, std::ostream& output) = 0;
     virtual ~LinePrintBehaviour() = default;
-
+    
 private:
     
 };

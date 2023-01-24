@@ -19,7 +19,7 @@ public:
     void printStopInfo(int id);
     void printLineInfo(const std::string& name);
     void findPath(int start_id, int end_id);
-
+    void changePathStrategy();
 
 
 private:
