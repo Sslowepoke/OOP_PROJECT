@@ -1,6 +1,5 @@
 #include "Path.h"
 
-
 int Path::getStartId() const{
     return stop_ids.front().front();
 }

@@ -2,11 +2,8 @@
 
 #include "Graph.h"
 
-
-
 class Simulation {
 public:
-
     static Simulation& getInstance();
 
     Simulation(const Simulation &) = delete;
@@ -16,17 +13,16 @@ public:
 
     void loadLineData(const std::string& file_path);
     void loadStopData(const std::string& file_path);
+
     void printStopInfo(int id);
     void printLineInfo(const std::string& name);
+
     void findPath(int start_id, int end_id);
     void changePathStrategy();
 
-
 private:
     Simulation() : graph() {}
-    
     Graph graph;
-
 
     class Option {
     public:
@@ -35,9 +31,6 @@ private:
         std::string name;
         virtual bool execute() = 0;
         friend std::ostream& operator<<(std::ostream& os, const Simulation::Option& option);
-    private:
-
-
     };
     friend std::ostream& operator<<(std::ostream& os, const Simulation::Option& option);
 
@@ -52,21 +45,14 @@ private:
     public:
         BusStopInfoOption() : 
             Option("Prikaz informacija o stajalistu"){}
-                // "Molimo Vas, unesite sifru stajalista cije informacije zelite da prikazete"
         bool execute() override;
-
-    private:
-        // int stop_id;
     };
 
     class BusLineInfoOption : public Option {
     public:
         BusLineInfoOption() :
             Option("Prikaz informacija o liniji gradskog prevoza") {}
-                // "Molimo Vas, unesite oznaku linije cije informacije zelite da prikazete."
         bool execute() override;
-    private:
-        // std::string line_name;
     };
 
     class FindPathOption : public Option {
@@ -96,7 +82,6 @@ private:
         void loadStopData();
     };
 
-
     class Interface {
     public:
         Interface();
@@ -108,12 +93,5 @@ private:
     private:
         std::vector<Option*> options;
     };
-
-    // class EndProgram : public std::exception {
-    // public:
-    //     std::string whatstr;
-    //     EndProgram() : whatstr("Goodbye :)") {}
-    //     const char* what() const noexcept override { return whatstr.c_str(); }
-    // };
 
 };

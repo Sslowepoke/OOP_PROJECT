@@ -45,7 +45,3 @@ public:
     PathDoesNotExistException()
     : SimulationException("Nije moguce doci sa zadatog pocetnog stajalista do krajnjeg.") {}
 };
-
-
-
-

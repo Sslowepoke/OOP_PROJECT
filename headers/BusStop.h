@@ -18,7 +18,7 @@ public:
     const std::string& getName() const { return name; } 
     bool is_important() const { return important; }
     const std::list<Edge*>& getEdges() const { return edges; }
-    bool was_visited() const {return visited; }
+    bool was_visited() const { return visited; }
     void visit() { visited = true; }
     void unvisit() { visited = false; }
 

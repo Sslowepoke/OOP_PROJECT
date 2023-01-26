@@ -35,6 +35,5 @@ std::list<int> BusLine::travel(BusStop* start, BusStop* end) const{
     else if(path.front() == start->getId()) {
         path.push_back(end->getId());
     }
-    // throw std::out_of_range("BusLine out of range.");
     return path;
 }

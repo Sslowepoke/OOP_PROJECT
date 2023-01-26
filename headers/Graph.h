@@ -30,7 +30,11 @@ public:
 
     std::list<BusStop*>& getImportantStops() { return important_stops; }
 
+    Graph(const Graph&) = delete;
+    Graph(const Graph&&) = delete;
+
 private:
+
     std::unordered_map<int, BusStop*> stops; //where key is station id
     std::list<BusStop*> important_stops;
 
@@ -94,7 +98,7 @@ private:
     };
 
 
-    std::vector<PathStrategy*> path_strategies = { new DefaultPathStrategy(this), 
+    std::vector<PathStrategy*> path_strategies = { new DefaultPathStrategy(this),
     new LeastTransfersPathStrategy(this), new ImportantStopsStrategy(this) };
     
 };

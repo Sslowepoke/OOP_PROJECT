@@ -4,7 +4,6 @@
 #include <set>
 #include <fstream>
 
-
 void DefaultStopPrintBehaviour::print(BusStop* stop, std::ostream& output) {
     this->stop = stop;
     output << getId() << " " << getName() << " [ ";
@@ -61,10 +60,3 @@ void Printer::printLine(BusLine* line) {
     else
         throw FailedToOpenFileException();
 }
-
-// void DefaultPathPrintBehaviour::print(const Graph::Path& Path) {
-//     int start_id;
-//     int end_id;
-//     std::string file_path = output_path + "putanja_" + std::to_string(start_id) + 
-//         "_" + std::to_string(end_id) + file_extension;
-// }

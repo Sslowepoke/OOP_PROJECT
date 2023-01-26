@@ -73,7 +73,6 @@ void Graph::loadLines(const std::string& file_path) {
 void Graph::insertBusLine(const std::string& string) {
     size_t index1 = string.find_first_of(' ');
     std::string name = string.substr(0, index1);
-    // std::string new_string = string.substr(index1 + 1);
     std::stringstream ss(string.substr(index1 + 1));
     int temp_id;
     std::list<BusStop*> line_stops;
@@ -88,11 +87,9 @@ void Graph::insertBusStop(const std::string& string) {
     bool important;
     std::string name;
     int id;
-
     size_t index1 = string.find_first_of(' ');
     size_t index2 = string.find("[!]");
     if(index2 == std::string::npos){
-        // index2 = string.find_first_of("\n\r");
         index2 = string.length();
         important = false;
     }
@@ -171,29 +168,7 @@ Path Graph::LeastTransfersPathStrategy::findPath(BusStop* start, BusStop* end) {
 }
 
 Path Graph::DefaultPathStrategy::findPath(BusStop* start, BusStop* end) {
-    std::queue<std::pair<BusStop*, std::vector<Edge*>>> queue;
-    std::unordered_map<int, bool> visited;
-    queue.push({start, std::vector<Edge*>()});
-
-    while(queue.size() > 0) {
-        auto current = queue.front();
-        auto* current_stop = current.first;
-        auto current_path = current.second;
-        queue.pop();
-        if(current_stop == end) {
-            return Path(start, current_path);
-        }
-        for(auto edge : current_stop->getEdges()) {
-            auto neighbour = edge->other(current_stop);
-            if(!visited.contains(neighbour->getId())) {
-                visited[neighbour->getId()] = true;
-                std::vector<Edge*> new_path(current_path);
-                new_path.push_back(edge);
-                queue.push({neighbour, new_path});
-            }
-        }
-    }
-    throw std::out_of_range("Nije moguce doci sa zadatog pocetnog stajalista do krajnjeg.");
+    return graph->findLeastTransfersPath(start, end);
 }
 
 Path Graph::findLeastTransfersPath(BusStop* start, BusStop* end) {

@@ -3,12 +3,10 @@
 
 #include <iostream>
 
-
 Simulation& Simulation::getInstance() {
     static Simulation instance;
     return instance;
 }
-
 
 void Simulation::openTerminal() {
     try {
@@ -31,7 +29,6 @@ void Simulation::openTerminal() {
 
 }
 
-
 void Simulation::Interface::printOptions() {
     int count = 0;
     for(auto option : options) {
@@ -50,7 +47,6 @@ bool Simulation::Interface::executeOption() {
     else
         throw InvalidOptionException();
 }
-
 
 Simulation::Interface::Interface() : options() {
     options.push_back(new ExitOption());
@@ -134,7 +130,6 @@ void Simulation::loadLineData(const std::string& file_path) {
 void Simulation::loadStopData(const std::string& file_path) {
     graph.loadStops(file_path);
 }
-
 
 void Simulation::LoadDataOption::loadLineData() {
     std::cout << "Molimo vas unesite putanju do fajla sa linijama ili "
