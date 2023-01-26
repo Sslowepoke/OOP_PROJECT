@@ -28,5 +28,5 @@ private:
     bool important;
     std::list<Edge*> edges;
     bool visited;
-    friend class DefaultStopPrintBehaviour;
+    friend class StopPrintBehaviour;
 };

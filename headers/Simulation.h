@@ -24,19 +24,15 @@ public:
 
 private:
     Simulation() : graph() {}
-
-    // static Simulation instance;
+    
     Graph graph;
 
 
-
-    // za komande koje idu u krug
     class Option {
     public:
         virtual ~Option() = default;
         Option(const std::string& name) : name(name) {}
-        // std::string what; //prompt koji se ispisuje korisniku na terminal ako je odabrana ova opcija
-        std::string name; //ime opcije (prilikom biranja)  
+        std::string name;
         virtual bool execute() = 0;
         friend std::ostream& operator<<(std::ostream& os, const Simulation::Option& option);
     private:
@@ -94,8 +90,8 @@ private:
 
     private:
         std::string file_path;
-        static constexpr std::string_view default_line_file_path = "files/OOP_PROJ_2022_23_JavniTest/test/linije.txt";
-        static constexpr std::string_view default_stop_file_path = "files/OOP_PROJ_2022_23_JavniTest/test/stajalista.txt";
+        static constexpr std::string_view default_line_file_path = "files/test/linije.txt";
+        static constexpr std::string_view default_stop_file_path = "files/test/stajalista.txt";
         void loadLineData();
         void loadStopData();
     };
@@ -113,11 +109,11 @@ private:
         std::vector<Option*> options;
     };
 
-    class EndProgram : public std::exception {
-    public:
-        std::string whatstr;
-        EndProgram() : whatstr("Goodbye :)") {}
-        const char* what() const noexcept override { return whatstr.c_str(); }
-    };
+    // class EndProgram : public std::exception {
+    // public:
+    //     std::string whatstr;
+    //     EndProgram() : whatstr("Goodbye :)") {}
+    //     const char* what() const noexcept override { return whatstr.c_str(); }
+    // };
 
 };

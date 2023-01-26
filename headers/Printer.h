@@ -7,6 +7,11 @@ class StopPrintBehaviour {
 public:
     virtual void print(BusStop* stop, std::ostream& output) = 0;
     virtual ~StopPrintBehaviour() = default;
+protected:
+    BusStop* stop;
+    std::list<Edge*> getEdges() { return stop->edges; }
+    std::string getName() const { return stop->name; }
+    int getId() const { return stop->id; }
 };
 
 class DefaultStopPrintBehaviour : public StopPrintBehaviour {
@@ -19,8 +24,10 @@ public:
     virtual void print(BusLine* line, std::ostream& output) = 0;
     virtual ~LinePrintBehaviour() = default;
     
-private:
-    
+protected:
+    BusLine* line;
+    std::string getName() const { return line->name; }
+    std::list<BusStop*>& getStops() const { return line->stops; }
 };
 
 class DefaultLinePrintBehaviour : public LinePrintBehaviour {

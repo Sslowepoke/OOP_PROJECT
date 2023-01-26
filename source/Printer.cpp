@@ -1,15 +1,16 @@
 #include "Printer.h"
+#include "Exceptions.h"
 
 #include <set>
 #include <fstream>
 
 
 void DefaultStopPrintBehaviour::print(BusStop* stop, std::ostream& output) {
-    output << stop->id << " " << stop->name << " [ ";
-
+    this->stop = stop;
+    output << getId() << " " << getName() << " [ ";
     std::set<std::string> line_names;
     std::set<int> important_ids;
-    for(Edge* edge : stop->edges) {
+    for(Edge* edge : getEdges()) {
         line_names.insert(edge->getLine()->getName());
         BusStop* neighbour = edge->other(stop);
         if(neighbour->is_important()) important_ids.insert(neighbour->getId());
@@ -26,9 +27,10 @@ void DefaultStopPrintBehaviour::print(BusStop* stop, std::ostream& output) {
 // sifra naziv [oznake_svih_linija] {! oznake_vaznih_stajalista !}
 
 void DefaultLinePrintBehaviour::print(BusLine* line, std::ostream& output) {
-    output << line->name << " " << line->stops.front()->getName() <<
-        "->" << line->stops.back()->getName() << std::endl;
-    for(auto stop : line->stops) {
+    this->line = line;
+    output << getName() << " " << getStops().front()->getName() <<
+        "->" << getStops().back()->getName() << std::endl;
+    for(auto stop : getStops()) {
         output << stop->getId() << " " << stop->getName();
         if(stop->is_important()) output << " [!]";
         output << std::endl;
@@ -47,7 +49,7 @@ void Printer::printStop(BusStop* stop) {
         stop_print_behaviour->print(stop, file);
     }
     else
-        throw std::runtime_error("Neuspesno otvaranje fajla.");
+        throw FailedToOpenFileException();
 }
 
 void Printer::printLine(BusLine* line) {
@@ -57,7 +59,7 @@ void Printer::printLine(BusLine* line) {
         line_print_behaviour->print(line, file);
     }
     else
-        throw std::runtime_error("Neuspesno otvaranje fajla.");
+        throw FailedToOpenFileException();
 }
 
 // void DefaultPathPrintBehaviour::print(const Graph::Path& Path) {

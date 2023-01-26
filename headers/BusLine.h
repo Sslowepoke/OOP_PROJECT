@@ -22,5 +22,5 @@ private:
     std::list<BusStop*> stops;
     std::list<Edge*> edges;
 
-    friend class DefaultLinePrintBehaviour;
+    friend class LinePrintBehaviour;
 };

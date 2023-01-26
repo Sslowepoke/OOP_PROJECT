@@ -1,4 +1,5 @@
 #include "Simulation.h"
+#include "Exceptions.h"
 
 #include <iostream>
 
@@ -43,11 +44,11 @@ bool Simulation::Interface::executeOption() {
     if(std::cin >> pos){
         std::cin.ignore();
         if(pos < 0 || options.size() <= pos) 
-            throw std::invalid_argument("Opcija koju ste izabrali nije validna, molimo pokusajte ponovo.");
+            throw InvalidOptionException();
         return options[pos]->execute();
     }
     else
-        throw std::invalid_argument("Opcija koju ste izabrali nije validna, molimo pokusajte ponovo.");
+        throw InvalidOptionException();
 }
 
 
@@ -97,7 +98,7 @@ bool Simulation::BusStopInfoOption::execute() {
         return true;
     }
     else 
-        throw std::invalid_argument("Sifra stanice koju ste uneli nije validna.");
+        throw InvalidStationCodeException();
 }
 
 void Simulation::printStopInfo(int id) {
@@ -164,12 +165,12 @@ bool Simulation::FindPathOption::execute() {
     if(std::cin >> start_id) 
         std::cin.ignore();
     else
-        throw std::invalid_argument("Uneli ste nevalidnu sifru pocetnog stajalista.");
+        throw InvalidStationCodeException();
     std::cout << "Molimo vas unestie krajnje stajaliste." << std::endl;
     if(std::cin >> end_id) 
         std::cin.ignore();
     else
-        throw std::invalid_argument("Uneli ste nevalidnu sifru krajnjeg stajalista.");
+        throw InvalidStationCodeException();
     getInstance().findPath(start_id, end_id);
     return true;
 }
